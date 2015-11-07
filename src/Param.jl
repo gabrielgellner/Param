@@ -27,4 +27,8 @@ macro paramdef(name, fields...)
     return Expr(:block, typedef, constructor)
 end
 
+macro withparam(ptype)
+    
+end
+
 end # module
