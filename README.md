@@ -66,29 +66,25 @@ end
 
 ```  
 
-This package includes the macro `@withparam` that can be used as follows:
+So `Param.jl` defines the macro `@withparam <param name list> <parameter argument name` that
+can be used as follows:
+
+```jl
+@withparam [:a, :b] par function ydot(t, y, par)
+    dydt = zeros(2)
+    dydt[1] = a*y[1] + b
+    dydt[2] = b*y[1] - b*y[1]*y[2]
+    return dydt
+end
+```
+This macro goes over the definition of the function and replaces all parameter names with
+the prefixed names. For example in the above would be translated into:
 
 ```jl
 function ydot(t, y, par)
-    @withparam(par)
     dydt = zeros(2)
-    dydt[1] = a*y[1] + b
-    dydt[2] = b*y[1] - b*y[1]*y[2]
+    dydt[1] = par.a*y[1] + par.b
+    dydt[2] = par.b*y[1] - par.b*y[1]*y[2]
     return dydt
 end
 ```
-
-(TODO: the only issue with this potentially is that I will be making a bunch of copies
-instead of just reading the fields. Can I make references to the fields? as they are
-likely just value types/immutable, another idea is to do something like:
-
-```jl
-@withparam par function ydot(t, y, par)
-    dydt = zeros(2)
-    dydt[1] = a*y[1] + b
-    dydt[2] = b*y[1] - b*y[1]*y[2]
-    return dydt
-end
-```
-
-where it just does a rebind/pattern replacement on the names. If this is even possible?)
