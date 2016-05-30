@@ -66,11 +66,11 @@ end
 
 ```  
 
-So `Param.jl` defines the macro `@withparam <param name list> <parameter argument name` that
+So `Param.jl` defines the macro `@withparam <param name> <parameter argument name>` that
 can be used as follows:
 
 ```jl
-@withparam [:a, :b] par function ydot(t, y, par)
+@withparam ODEParam par function ydot(t, y, par)
     dydt = zeros(2)
     dydt[1] = a*y[1] + b
     dydt[2] = b*y[1] - b*y[1]*y[2]

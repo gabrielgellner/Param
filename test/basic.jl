@@ -9,7 +9,7 @@ using Base.Test
     m = 0.3
 )
 
-@withparam LVPar function ydot(t, y, par)
+@withparam LVPar par function ydot(t, y, par)
     ydot = zeros(2)
     ydot[1] = r*y[1]*(1.0 - y[1]/K) - a*y[1]*y[2]
     ydot[2] = e*a*y[1]*y[2]
