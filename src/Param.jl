@@ -1,6 +1,7 @@
 module Param
+using Parameters
 
-export @paramdef, @withparam, walk_expr
+export @paramdef, @withparam, walk_expr, @with_kw
 
 macro paramdef(name, fields...)
     if !isa(name, Symbol)
