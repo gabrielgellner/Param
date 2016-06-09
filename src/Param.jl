@@ -60,6 +60,12 @@ macro withparam(typename, argname, func)
     lookup = Core.eval(:(fieldnames($typename)))
 
     function replace_pars(arg)
+        #TODO: this code doesn't differentiate a symbol on its own and a symbol that
+        # is a type lookup
+        # that is if the code has something like a*t.a
+        # both symbols :a willl be replaced, even though we likely only want to replace
+        # the first one. Should also check how having the symbols inside function calls
+        # could work like sin(a) vs sin(t.a) to make sure I do the correct replacement
         if arg in lookup
             return :($argname.$arg)
         else
