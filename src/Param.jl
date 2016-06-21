@@ -1,33 +1,7 @@
 module Param
-using Parameters
+import Parameters: @with_kw
 
-export @paramdef, @withparam, walk_expr, @with_kw
-
-macro paramdef(name, fields...)
-    if !isa(name, Symbol)
-        throw(ArgumentError("invalid name for parameter type (must be a symbol): $name"))
-    end
-
-    tname = esc(name) # for anti-macro hygiene ... I think this is needed! Check
-
-    nfields = length(fields)
-    varnames = Array{Any}(nfields)
-    vars = Array{Any}(nfields)
-    for i in 1:nfields
-        varnames[i] = fields[i].args[1]
-        # create the type named `name` with the fields given by the keywords (add checks to make sure they are kw's!)}
-        # we need to eval the args[2] to get the correct types for things like `BigFloat(3.0)` etc
-        vars[i] = Expr(:(::), varnames[i], typeof(eval(fields[i].args[2])))
-    end
-    typedef = Expr(:type, true, tname, Expr(:block, vars...))
-
-    # create a default constructor for the type with the provided defaults
-    ##TODO: add better error messages on entering the wrong types
-    constructor = :( $tname(; $(fields...)) = $tname($(varnames...)) )
-    ##TODO: add a nice printing method
-
-    return Expr(:block, typedef, constructor)
-end
+export @with_kw, @withparam
 
 """
     dfs_expr(f, ex::Expr)
@@ -75,5 +49,23 @@ macro withparam(typename, argname, func)
     code = dfs_expr(replace_pars, func)
     return esc(code)
 end
+
+#=
+# Some nice utitlities for working with these kind of Parameter types
+=#
+
+#TODO: see if I can get this to work
+# function like{T}(par::T; kwargs...)
+#     flds = fieldnames(par)
+#     newpar = T()
+#     for (name, val) in kwargs
+#         if name in flds
+#             newpar.(name) = val
+#         else
+#             throw(ArgumentError("$name is not a field of $T"))
+#         end
+#     end
+#     return newpar
+# end
 
 end # module
