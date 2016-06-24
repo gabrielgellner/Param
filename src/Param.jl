@@ -1,7 +1,7 @@
 module Param
 import Parameters: @with_kw
 
-export @with_kw, @withparam
+export @with_kw, @withparam, @withdict
 
 """
     dfs_expr(f, ex::Expr)
@@ -42,6 +42,29 @@ macro withparam(typename, argname, func)
         # could work like sin(a) vs sin(t.a) to make sure I do the correct replacement
         if arg in lookup
             return :($argname.$arg)
+        else
+            return arg
+        end
+    end
+    code = dfs_expr(replace_pars, func)
+    return esc(code)
+end
+
+macro withdict(argname, func)
+    #TODO: I need a way to actually check that the name of the function parameter is the
+    # same as the one asked for
+    lookup = Core.eval(:(keys($argname)))
+    function replace_pars(arg)
+        #TODO: this code doesn't differentiate a symbol on its own and a symbol that
+        # is a type lookup
+        # that is if the code has something like a*t.a
+        # both symbols :a willl be replaced, even though we likely only want to replace
+        # the first one. Should also check how having the symbols inside function calls
+        # could work like sin(a) vs sin(t.a) to make sure I do the correct replacement
+        if arg in lookup
+            #TODO: I don't know how to get the arg to stay a symbol
+            #@show :($argname[Symbol($arg)])
+            return :($argname[$arg])
         else
             return arg
         end
