@@ -1,5 +1,8 @@
 # Param.jl
 
+# USE Parameters.jl INSTEAD
+This package is just here now for my own amusement. Paramters.jl is much better.
+
 # Install
 From the julia command prompt, run:
 ```julia
